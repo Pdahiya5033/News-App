@@ -4,31 +4,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:background="@color/white"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <Button
-            android:id="@+id/loginBtnTopFragLogin"
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:background="@color/white"
             android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:layout_weight="1"
-            android:background="@drawable/shape_top_btn"
-            android:text="LOGIN" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <Button
-            android:id="@+id/signUpBtnTopFragLogin"
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:backgroundTint="#F30D0D"
-            android:layout_weight="1"
-            android:background="@drawable/shape_top_btn"
-            android:text="SIGN UP" />
-    </LinearLayout>
+            <Button
+                android:id="@+id/loginBtnTopFragLogin"
+                android:layout_width="200dp"
+                android:layout_height="70dp"
+                android:layout_weight="1"
+                android:textColor="@color/white"
+                android:background="@drawable/shape_top_btn"
+                android:text="LOGIN" />
+
+            <Button
+                android:id="@+id/signUpBtnTopFragLogin"
+                android:layout_width="200dp"
+                android:layout_height="70dp"
+                android:layout_weight="1"
+                android:textColor="@color/white"
+                android:background="@drawable/shape_top_btn"
+                android:text="SIGN UP" />
+        </LinearLayout>
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView_signIn"
         android:layout_width="match_parent"
@@ -153,7 +154,7 @@
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:layout_marginTop="517dp"
-        android:backgroundTint="#F30D0D"
+        android:textColor="@color/white"
         android:text="Login"
         android:background="@drawable/shape_bottom_btn"
         app:layout_constraintTop_toTopOf="@+id/cardView_signIn"

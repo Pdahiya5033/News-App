@@ -1,7 +1,9 @@
 package com.example.newsapp;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -47,6 +50,10 @@ public class SignUpFrag extends Fragment {
         register=view.findViewById(R.id.registerBtnSignUp);
         signInTV=view.findViewById(R.id.signInTextCAFrag);
         countryCodePicker=view.findViewById(R.id.countryCodePicker);
+        loginTop.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.shape_top_not_clicked));
+        loginTop.setTextColor(Color.BLACK);
+        signUpTop.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.shape_top_btn));
+        signUpTop.setTextColor(Color.WHITE);
         loginTop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

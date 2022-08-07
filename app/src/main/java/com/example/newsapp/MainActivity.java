@@ -1,18 +1,14 @@
 package com.example.newsapp;
 
-import androidx.annotation.NonNull;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
+import android.widget.Toast;
+import android.widget.Toolbar;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import android.app.ProgressDialog;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
-
-import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 

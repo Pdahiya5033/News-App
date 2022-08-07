@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.facebook.CallbackManager;
@@ -70,6 +71,10 @@ public class LoginFrag extends Fragment {
         loginBtnBottom=view.findViewById(R.id.loginBtnBottom);
         emailTVLogin=view.findViewById(R.id.emailEditTextLogin);
         passwordTVLogin=view.findViewById(R.id.passwordETLogin);
+        signUpTop.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.shape_top_not_clicked));
+        signUpTop.setTextColor(Color.BLACK);
+        loginTop.setBackground(ContextCompat.getDrawable(getContext(),R.drawable.shape_top_btn));
+        loginTop.setTextColor(Color.WHITE);
         googleImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -91,6 +96,7 @@ public class LoginFrag extends Fragment {
 
             }
         });
+
         signUpTop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

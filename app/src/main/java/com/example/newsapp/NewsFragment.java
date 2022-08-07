@@ -1,5 +1,7 @@
 package com.example.newsapp;
 
+import android.app.ActionBar;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,7 +14,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;

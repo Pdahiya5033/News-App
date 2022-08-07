@@ -8,9 +8,10 @@
     tools:context=".MainActivity">
 
     <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
-        android:background="@color/black"
+        android:background="#F10606"
         app:contentInsetEnd="0dp"
         app:contentInsetLeft="0dp"
         app:contentInsetRight="0dp"
