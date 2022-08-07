@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">News App</string>
+    <string name="signintext">SignIn into your Account</string>
+    <string name="createacctext">Create an Account</string>
+    <string name="emailTVSignInSignUp">Email</string>
+    <string name="passwordTVSignin">Password</string>
+    <string name="forgotpasswordTV">Forgot Password ?</string>
+    <string name="loginOptions">Login with</string>
+    <string name="registerOptOnLogin">Don\'t have an Account?</string>
+    <string name="registerLogin">Register Now</string>
+    <string name="emailHintLoginSignUp">alpha@gmail.com</string>
+    <string name="passwordHintLogin">password</string>
+    <string name="nameTVsignUp">Name</string>
+    <string name="nameHintSignUp">Alpha Beta</string>
+    <string name="contactNo">Contact No</string>
+    <string name="agree_with">I agree with</string>
+    <string name="tAndC"><![CDATA[terms & conditions]]></string>
+    <string name="already_have_acc">Already have an Account?</string>
+    <string name="signInReg">Sign In!</string>
+
+    <string name="facebook_app_id">427143789380275</string>
+    <string name="fb_login_protocol_scheme">fb427143789380275</string>
+    <string name="facebook_client_token">f4ac1fa785a2c10bcc24e6f080c2d9db</string>
+
+
+</resources>
