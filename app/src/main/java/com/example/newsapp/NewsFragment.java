@@ -76,6 +76,7 @@ public class NewsFragment extends Fragment {
             public void onClick(View view) {
                     mAuth.signOut();
                     LoginManager.getInstance().logOut();
+                    Toast.makeText(getContext(),"Signed out..",Toast.LENGTH_SHORT).show();
                     launchMainAct();
             }
         });

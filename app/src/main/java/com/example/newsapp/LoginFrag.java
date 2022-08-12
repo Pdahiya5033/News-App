@@ -1,10 +1,11 @@
 package com.example.newsapp;
 
 import android.app.Application;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.telecom.Call;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -29,29 +31,47 @@ import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.auth.api.identity.BeginSignInRequest;
+import com.google.android.gms.auth.api.identity.BeginSignInResult;
+import com.google.android.gms.auth.api.identity.Identity;
+import com.google.android.gms.auth.api.identity.SignInClient;
+import com.google.android.gms.auth.api.identity.SignInCredential;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 
 import java.util.Arrays;
+import java.util.concurrent.Executor;
+
+import okhttp3.Call;
 
 public class LoginFrag extends Fragment {
     private final String TAG="LoginFrag";
     private static final String EMAIL = "email";
+    private static final int REQ_ONE_TAP = 100;
+    private boolean showOneTapUI = true;
     ImageView googleImage;
     ImageView fbSignIn;
     Button loginTop,signUpTop,loginBtnBottom;
     EditText emailTVLogin,passwordTVLogin;
     CallbackManager callbackManager;
     FirebaseAuth mAuth;
+    BeginSignInRequest signUpRequest;
+    SignInClient oneTapClient;
+
     private TextView registerTV,forgotPassTV;
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -78,11 +98,7 @@ public class LoginFrag extends Fragment {
         googleImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                Intent intent=new Intent(getContext(),GoogleSignInAct.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(intent);
-                Log.d(TAG,"????????????"+getActivity());
+                signInWithGoogle();
             }
         });
 
@@ -90,10 +106,10 @@ public class LoginFrag extends Fragment {
         fbSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(getContext(),FBSignInAct.class);
-                startActivity(intent);
-                Log.d(TAG,"????????????"+getActivity());
-
+//                Intent intent=new Intent(getContext(),FBSignInAct.class);
+//                startActivity(intent);
+//                Log.d(TAG,"????????????"+getActivity());
+                signInWithFB();
             }
         });
 
@@ -126,6 +142,149 @@ public class LoginFrag extends Fragment {
             }
         });
         return view;
+    }
+// signing into google account
+    private void signInWithGoogle() {
+        ProgressDialog progressDialog;
+        mAuth=FirebaseAuth.getInstance();
+        progressDialog=new ProgressDialog(getContext());
+        progressDialog.setMessage("Google Sign In...");
+        progressDialog.show();
+        oneTapClient = Identity.getSignInClient(getActivity());
+        signUpRequest = BeginSignInRequest.builder()
+                .setGoogleIdTokenRequestOptions(BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
+                        .setSupported(true)
+                        // Your server's client ID, not your Android client ID.
+                        .setServerClientId(getString(R.string.default_web_client_id))
+                        // Show all accounts on the device.
+                        .setFilterByAuthorizedAccounts(false)
+                        .build())
+                .build();
+        oneTapClient.beginSignIn(signUpRequest)
+                .addOnSuccessListener(getActivity(), new OnSuccessListener<BeginSignInResult>() {
+
+                    @Override
+                    public void onSuccess(BeginSignInResult result) {
+                        Bundle bundle=new Bundle();
+                        try {
+                            progressDialog.dismiss();
+                            startIntentSenderForResult(
+                                    result.getPendingIntent().getIntentSender(), REQ_ONE_TAP,
+                                    new Intent(String.valueOf(getActivity())), 0, 0, 0,bundle);
+                        } catch (IntentSender.SendIntentException e) {
+                            Log.e(TAG, "Couldn't start One Tap UI: " + e.getLocalizedMessage());
+                        }
+                    }
+                })
+                .addOnFailureListener(getActivity(), new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // No Google Accounts found. Just continue presenting the signed-out UI.
+                        progressDialog.dismiss();
+                        Toast.makeText(getActivity(),"You don't have any active google accounts",Toast.LENGTH_SHORT)
+                                .show();
+                    }
+                });
+    }
+    private void signInWithFB(){
+        mAuth=FirebaseAuth.getInstance();
+        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
+        LoginManager.getInstance().registerCallback(callbackManager,
+                new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(LoginResult loginResult) {
+                        handleFacebookAccessToken(loginResult.getAccessToken());
+                    }
+
+                    @Override
+                    public void onCancel() {
+
+                    }
+
+                    @Override
+                    public void onError(FacebookException exception) {
+                        // App code
+                    }
+                });
+    }
+    private void handleFacebookAccessToken(AccessToken token) {
+        Log.d(TAG, "handleFacebookAccessToken:" + token);
+
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithCredential:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            Log.d(TAG,user.getDisplayName());
+                            updateUI();
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            Toast.makeText(getContext(), "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+
+                        }
+                    }
+                });
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case REQ_ONE_TAP:
+                try {
+                    SignInCredential credential = oneTapClient.getSignInCredentialFromIntent(data);
+                    String idToken = credential.getGoogleIdToken();
+                    if (idToken !=  null) {
+                        AuthCredential authCredential= GoogleAuthProvider.getCredential(idToken,null);
+                        FirebaseAuth firebaseAuth=FirebaseAuth.getInstance();
+                        firebaseAuth.signInWithCredential(authCredential)
+                                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                        if(task.isSuccessful()){
+                                            updateUI();
+                                        }
+                                        else{
+                                            Log.d(TAG,"auth failed");
+                                        }
+                                    }
+                                });
+
+                    }
+                } catch (ApiException e) {
+                    Log.d(TAG,"exception in on activity result");
+                    switch (e.getStatusCode()) {
+                        case CommonStatusCodes.CANCELED:
+                            Log.d(TAG, "One-tap dialog was closed.");
+                            // Don't re-prompt the user.
+                            showOneTapUI = false;
+                            break;
+                        case CommonStatusCodes.NETWORK_ERROR:
+                            Log.d(TAG, "One-tap encountered a network error.");
+                            // Try again or just ignore.
+                            break;
+                        default:
+                            Log.d(TAG, "Couldn't get credential from result."
+                                    + e.getLocalizedMessage());
+                            break;
+                    }
+                }
+                break;
+            default:
+                callbackManager.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    private void updateUI() {
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container,new NewsFragment())
+                .addToBackStack(null).commit();
     }
 
     private void loginUser(String email, String password) {

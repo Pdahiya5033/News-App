@@ -1,18 +1,26 @@
 package com.example.newsapp;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +28,13 @@ import java.util.List;
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> implements Filterable {
     private List<NewsData> listNews =new ArrayList<>();
     private List<NewsData> tempListNews;
+    private static final String TAG="NewsAdapter";
     private Context mContext;
+    private int heightCard;
+    private boolean cardClicked=false;
+    private int cardClickedPos;
+    private CardView tempCard;
+    private TextView tempTV;
     public NewsAdapter(Context mContext){
         this.mContext=mContext;
     }
@@ -41,6 +55,16 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> im
                 holder.time.setText(temp.getHours());
                 Glide.with(mContext).load(temp.getImgUrl()).into(holder.imageNews);
             }
+            holder.cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+//                    RelativeLayout.LayoutParams layoutParams=(RelativeLayout.LayoutParams) holder.cardView.getLayoutParams();
+//                    layoutParams.height=heightCard*2;
+//                    holder.cardView.setLayoutParams(layoutParams);
+
+                }
+
+            });
 
     }
 
@@ -91,13 +115,17 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> im
     public class ViewHolder extends RecyclerView.ViewHolder{
         TextView heading,time,description,source;
         ImageView imageNews;
+        CardView cardView;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            cardView=itemView.findViewById(R.id.news_cardView);
             heading=itemView.findViewById(R.id.headingNewsTV);
             time=itemView.findViewById(R.id.timeNewsTV);
             description=itemView.findViewById(R.id.descriptionNewsTV);
             source=itemView.findViewById(R.id.sourceNewsTV);
             imageNews=itemView.findViewById(R.id.imageNews);
+            heightCard=cardView.getHeight();
         }
+
     }
 }
